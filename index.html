@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dart Counter Pro</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
         * {
             margin: 0;
@@ -325,10 +325,14 @@
             transform: scale(1.05);
         }
 
+        .quick-score-btn:active {
+            transform: scale(0.95);
+        }
+
         .score-input-row {
             display: flex;
             gap: 10px;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
 
         .score-input {
@@ -353,6 +357,10 @@
             transform: translateY(-1px);
         }
 
+        .score-input::placeholder {
+            color: #8e8e93;
+        }
+
         .add-btn, .undo-btn {
             padding: 16px 24px;
             border: none;
@@ -375,6 +383,10 @@
             box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
         }
 
+        .add-btn:active {
+            transform: translateY(0);
+        }
+
         .undo-btn {
             background: rgba(255, 149, 0, 0.15);
             color: #ff9500;
@@ -384,6 +396,50 @@
         .undo-btn:hover {
             background: rgba(255, 149, 0, 0.25);
             transform: translateY(-2px);
+        }
+
+        .undo-btn:active {
+            transform: translateY(0);
+        }
+
+        .current-darts-display {
+            margin-top: 12px;
+            padding: 14px;
+            background: rgba(28, 28, 30, 0.6);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 12px;
+            color: #ebebf0;
+            font-size: 0.95em;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .current-darts-display .total {
+            color: #6366f1;
+            font-weight: 700;
+            font-size: 1.2em;
+            margin-top: 6px;
+        }
+
+        .finish-round-btn {
+            background: linear-gradient(135deg, #34c759 0%, #30d158 100%);
+            color: white;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 4px 12px rgba(52, 199, 89, 0.3);
+        }
+
+        .finish-round-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(52, 199, 89, 0.4);
+        }
+
+        .finish-round-btn:active {
+            transform: translateY(0);
         }
 
         .history-small {
@@ -442,6 +498,7 @@
             color: #ebebf0;
             font-weight: 500;
             font-size: 0.95em;
+            text-align: center;
         }
 
         .checkout-option.recommended {
@@ -481,6 +538,10 @@
             transform: translateY(-2px);
         }
 
+        .reset-btn:active {
+            transform: translateY(0);
+        }
+
         .new-game-btn {
             background: linear-gradient(135deg, #34c759 0%, #30d158 100%);
             color: white;
@@ -490,6 +551,10 @@
         .new-game-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 16px rgba(52, 199, 89, 0.4);
+        }
+
+        .new-game-btn:active {
+            transform: translateY(0);
         }
 
         .settings-grid {
@@ -516,7 +581,7 @@
             letter-spacing: -0.01em;
         }
 
-        .setting-item input,
+        .setting-item input[type="text"],
         .setting-item select {
             width: 100%;
             padding: 14px 16px;
@@ -541,6 +606,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
+            margin-top: 8px;
         }
 
         .checkbox-row input[type="checkbox"] {
@@ -656,8 +722,9 @@
 
         .winner-modal p {
             font-size: 1.4em;
-            color: #8e8e93;
+            color: #ebebf0;
             margin-bottom: 30px;
+            font-weight: 600;
         }
 
         .winner-stats {
@@ -688,7 +755,6 @@
             font-weight: 700;
         }
 
-        /* Scrollbar */
         ::-webkit-scrollbar {
             width: 10px;
         }
@@ -715,6 +781,12 @@
                 font-size: 2.2em;
             }
 
+            .icon {
+                width: 64px;
+                height: 64px;
+                font-size: 32px;
+            }
+
             .players-grid {
                 grid-template-columns: 1fr;
             }
@@ -725,6 +797,40 @@
 
             .quick-scores {
                 grid-template-columns: repeat(3, 1fr);
+            }
+
+            .mode-selector {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .winner-modal {
+                padding: 40px 30px;
+            }
+
+            .winner-modal h2 {
+                font-size: 2.5em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .score-display {
+                font-size: 3em;
+            }
+
+            .quick-scores {
+                grid-template-columns: repeat(2, 1fr);
             }
         }
     </style>
@@ -743,17 +849,15 @@
             <button class="tab-btn" onclick="switchTab('stats')">Statistiken</button>
         </div>
 
-        <!-- SPIEL TAB -->
         <div class="tab-content active" id="gameTab">
             <div class="mode-selector">
                 <button class="mode-btn active" onclick="setMode(301)">301</button>
                 <button class="mode-btn" onclick="setMode(501)">501</button>
                 <button class="mode-btn" onclick="setMode(701)">701</button>
-                <button class="mode-btn" onclick="setMode(1001)">1001</button>
             </div>
 
             <div class="checkout-helper" id="checkoutHelper">
-                <h3>🎯 Checkout-Vorschläge</h3>
+                <h3>🎯 Checkout-Vorschläge für <span id="checkoutScore"></span> Punkte</h3>
                 <div class="checkout-options" id="checkoutOptions"></div>
             </div>
 
@@ -765,12 +869,11 @@
             </div>
         </div>
 
-        <!-- EINSTELLUNGEN TAB -->
         <div class="tab-content" id="settingsTab">
             <div class="settings-grid">
                 <div class="setting-item">
                     <label>Anzahl Spieler</label>
-                    <select id="playerCount" onchange="updatePlayerCount()">
+                    <select id="playerCount">
                         <option value="2" selected>2 Spieler</option>
                         <option value="3">3 Spieler</option>
                         <option value="4">4 Spieler</option>
@@ -798,34 +901,34 @@
                 </div>
 
                 <div class="setting-item">
-                    <label>Spielmodus</label>
+                    <label>Eingabemodus</label>
+                    <select id="inputMode">
+                        <option value="total" selected>Gesamt pro Runde (3 Darts)</option>
+                        <option value="single">Einzelne Darts eingeben</option>
+                    </select>
+                </div>
+
+                <div class="setting-item">
+                    <label>Spieloptionen</label>
                     <div class="checkbox-row">
                         <input type="checkbox" id="doubleOut">
-                        <span>Double-Out</span>
+                        <span>Double-Out erforderlich</span>
                     </div>
-                </div>
-
-                <div class="setting-item">
-                    <label>Start-Regel</label>
                     <div class="checkbox-row">
                         <input type="checkbox" id="doubleIn">
-                        <span>Double-In</span>
+                        <span>Double-In erforderlich</span>
                     </div>
                 </div>
 
                 <div class="setting-item">
-                    <label>Features</label>
+                    <label>Anzeigeoptionen</label>
                     <div class="checkbox-row">
                         <input type="checkbox" id="checkoutSuggestions" checked>
-                        <span>Checkout-Vorschläge</span>
+                        <span>Checkout-Vorschläge anzeigen</span>
                     </div>
-                </div>
-
-                <div class="setting-item">
-                    <label>Anzeige</label>
                     <div class="checkbox-row">
                         <input type="checkbox" id="quickScores" checked>
-                        <span>Schnell-Buttons</span>
+                        <span>Schnell-Score Buttons</span>
                     </div>
                 </div>
             </div>
@@ -833,3 +936,466 @@
             <div class="controls">
                 <button class="control-btn new-game-btn" onclick="applySettings()">Einstellungen übernehmen</button>
             </div>
+        </div>
+
+        <div class="tab-content" id="statsTab">
+            <div class="stats-grid" id="statsGrid"></div>
+            <div class="controls" style="margin-top: 30px;">
+                <button class="control-btn new-game-btn" onclick="switchTab('game')">Zurück zum Spiel</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="winner-overlay" id="winnerOverlay">
+        <div class="winner-modal">
+            <h2>🏆</h2>
+            <p id="winnerText"></p>
+            <div class="winner-stats" id="winnerStatsDiv"></div>
+        </div>
+    </div>
+
+    <script>
+        const checkoutTable = {
+            170: ["T20 · T20 · Bull"], 167: ["T20 · T19 · Bull"], 164: ["T20 · T18 · Bull", "T19 · T19 · Bull"],
+            161: ["T20 · T17 · Bull"], 160: ["T20 · T20 · D20"], 158: ["T20 · T20 · D19"],
+            157: ["T20 · T19 · D20"], 156: ["T20 · T20 · D18"], 155: ["T20 · T19 · D19"],
+            154: ["T20 · T18 · D20"], 153: ["T20 · T19 · D18"], 152: ["T20 · T20 · D16"],
+            151: ["T20 · T17 · D20"], 150: ["T20 · T18 · D18"], 149: ["T20 · T19 · D16"],
+            148: ["T20 · T16 · D20"], 147: ["T20 · T17 · D18"], 146: ["T20 · T18 · D16"],
+            145: ["T20 · T15 · D20"], 144: ["T20 · T20 · D12"], 143: ["T20 · T17 · D16"],
+            142: ["T20 · T14 · D20"], 141: ["T20 · T19 · D12"], 140: ["T20 · T20 · D10"],
+            139: ["T20 · T13 · D20"], 138: ["T20 · T18 · D12"], 137: ["T20 · T19 · D10"],
+            136: ["T20 · T20 · D8"], 135: ["T20 · T17 · D12"], 134: ["T20 · T14 · D16"],
+            133: ["T20 · T19 · D8"], 132: ["T20 · T16 · D12"], 131: ["T20 · T13 · D16"],
+            130: ["T20 · T18 · D8"], 129: ["T19 · T16 · D12"], 128: ["T18 · T14 · D16"],
+            127: ["T20 · T17 · D8"], 126: ["T19 · T19 · D6"], 125: ["T18 · T13 · D16"],
+            124: ["T20 · T16 · D8"], 123: ["T19 · T16 · D9"], 122: ["T18 · T18 · D7"],
+            121: ["T20 · T11 · D14"], 120: ["T20 · 20 · D20"], 119: ["T19 · T12 · D11"],
+            118: ["T20 · 18 · D20"], 117: ["T20 · 17 · D20"], 116: ["T20 · 16 · D20"],
+            115: ["T20 · 15 · D20"], 114: ["T20 · 14 · D20"], 113: ["T20 · 13 · D20"],
+            112: ["T20 · 12 · D20"], 111: ["T20 · 19 · D16"], 110: ["T20 · 18 · D16"],
+            109: ["T20 · 17 · D16"], 108: ["T20 · 16 · D16"], 107: ["T19 · 18 · D16"],
+            106: ["T20 · 14 · D16"], 105: ["T20 · 13 · D16"], 104: ["T18 · 18 · D16"],
+            103: ["T20 · 11 · D16"], 102: ["T20 · 10 · D16"], 101: ["T17 · 10 · D20"],
+            100: ["T20 · D20"], 98: ["T20 · D19"], 96: ["T20 · D18"], 94: ["T18 · D20"],
+            92: ["T20 · D16"], 90: ["T20 · D15"], 88: ["T16 · D20"], 86: ["T18 · D16"],
+            84: ["T20 · D12"], 82: ["Bull · D16"], 80: ["T20 · D10"], 78: ["T18 · D12"],
+            76: ["T20 · D8"], 74: ["T14 · D16"], 72: ["T16 · D12"], 70: ["T10 · D20"],
+            68: ["T20 · D4"], 66: ["T10 · D18"], 64: ["T16 · D8"], 62: ["T10 · D16"],
+            60: ["20 · D20"], 58: ["18 · D20"], 56: ["T16 · D4"], 54: ["14 · D20"],
+            52: ["12 · D20"], 50: ["10 · D20"], 48: ["16 · D16"], 46: ["6 · D20"],
+            44: ["12 · D16"], 42: ["10 · D16"], 40: ["D20"], 38: ["D19"], 36: ["D18"],
+            34: ["D17"], 32: ["D16"], 30: ["D15"], 28: ["D14"], 26: ["D13"],
+            24: ["D12"], 22: ["D11"], 20: ["D10"], 18: ["D9"], 16: ["D8"],
+            14: ["D7"], 12: ["D6"], 10: ["D5"], 8: ["D4"], 6: ["D3"], 4: ["D2"], 2: ["D1"]
+        };
+
+        let gameState = {
+            mode: 301,
+            currentPlayer: 1,
+            playerCount: 2,
+            scores: {},
+            startScores: {},
+            history: {},
+            dartsThrown: {},
+            currentDarts: {},
+            playerNames: {},
+            settings: {
+                doubleOut: false,
+                doubleIn: false,
+                checkoutSuggestions: true,
+                quickScores: true,
+                inputMode: 'total'
+            }
+        };
+
+        function initGame() {
+            for (let i = 1; i <= 4; i++) {
+                gameState.scores[i] = gameState.mode;
+                gameState.startScores[i] = gameState.mode;
+                gameState.history[i] = [];
+                gameState.dartsThrown[i] = 0;
+                gameState.currentDarts[i] = [];
+                gameState.playerNames[i] = document.getElementById(`player${i}Name`).value;
+            }
+            renderPlayers();
+            updateCheckoutHelper();
+        }
+
+        function renderPlayers() {
+            const grid = document.getElementById('playersGrid');
+            grid.innerHTML = '';
+
+            for (let i = 1; i <= gameState.playerCount; i++) {
+                const isActive = i === gameState.currentPlayer;
+                const card = document.createElement('div');
+                card.className = `player-card ${isActive ? 'active-player' : ''}`;
+
+                const quickScoresHTML = gameState.settings.quickScores ? `
+                    <div class="quick-scores">
+                        <button class="quick-score-btn" onclick="quickScore(${i}, 26)">26</button>
+                        <button class="quick-score-btn" onclick="quickScore(${i}, 41)">41</button>
+                        <button class="quick-score-btn" onclick="quickScore(${i}, 60)">60</button>
+                        <button class="quick-score-btn" onclick="quickScore(${i}, 81)">81</button>
+                        <button class="quick-score-btn" onclick="quickScore(${i}, 85)">85</button>
+                        <button class="quick-score-btn" onclick="quickScore(${i}, 100)">100</button>
+                        <button class="quick-score-btn" onclick="quickScore(${i}, 140)">140</button>
+                        <button class="quick-score-btn" onclick="quickScore(${i}, 180)">180</button>
+                    </div>
+                ` : '';
+
+                let inputHTML = '';
+                if (gameState.settings.inputMode === 'single') {
+                    const currentDarts = gameState.currentDarts[i];
+                    const dartNum = currentDarts.length + 1;
+                    const total = currentDarts.reduce((a, b) => a + b, 0);
+
+                    inputHTML = `
+                        <div class="score-input-row">
+                            <input type="number" class="score-input" id="input${i}" 
+                                   placeholder="Dart ${dartNum}" min="0" max="60">
+                            <button class="add-btn" onclick="addSingleDart(${i})">+ Dart</button>
+                        </div>
+                        ${currentDarts.length > 0 ? `
+                            <div class="current-darts-display">
+                                Aktuelle Darts: ${currentDarts.join(' + ')}
+                                <div class="total">Summe: ${total}</div>
+                            </div>
+                            <div class="score-input-row">
+                                <button class="undo-btn" onclick="removeLastDart(${i})" style="flex: 1;">← Letzter Dart</button>
+                                <button class="finish-round-btn" onclick="finishRound(${i})" style="flex: 1;">Runde beenden</button>
+                            </div>
+                        ` : ''}
+                    `;
+                } else {
+                    inputHTML = `
+                        <div class="score-input-row">
+                            <input type="number" class="score-input" id="input${i}" 
+                                   placeholder="Punkte" min="0" max="180">
+                            <button class="add-btn" onclick="addScore(${i})">+</button>
+                            <button class="undo-btn" onclick="undoScore(${i})">↶</button>
+                        </div>
+                    `;
+                }
+
+                card.innerHTML = `
+                    <div class="player-header">
+                        <div class="player-name">${gameState.playerNames[i]}</div>
+                        <div class="player-stats-small">Darts: ${gameState.dartsThrown[i]}</div>
+                    </div>
+                    <div class="score-display">${gameState.scores[i]}</div>
+                    <div class="average-display">Ø ${calculateAverage(i)} pro Wurf</div>
+                    ${quickScoresHTML}
+                    ${inputHTML}
+                    <div class="history-small">
+                        ${gameState.history[i].slice(0, 5).join(' · ') || 'Noch keine Würfe'}
+                    </div>
+                `;
+
+                grid.appendChild(card);
+
+                const input = document.getElementById(`input${i}`);
+                if (input) {
+                    input.addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter') {
+                            if (gameState.settings.inputMode === 'single') {
+                                addSingleDart(i);
+                            } else {
+                                addScore(i);
+                            }
+                        }
+                    });
+                }
+            }
+        }
+
+        function quickScore(player, points) {
+            if (gameState.settings.inputMode === 'total') {
+                document.getElementById(`input${player}`).value = points;
+                addScore(player);
+            }
+        }
+
+        function addScore(player) {
+            const input = document.getElementById(`input${player}`);
+            const points = parseInt(input.value);
+
+            if (!points || points < 0 || points > 180) {
+                input.value = '';
+                return;
+            }
+
+            const newScore = gameState.scores[player] - points;
+
+            if (newScore < 0 || (newScore === 1 && gameState.settings.doubleOut)) {
+                alert('Überwurf! Punkte werden nicht abgezogen.');
+                input.value = '';
+                return;
+            }
+
+            if (newScore === 0 && gameState.settings.doubleOut) {
+                const isDouble = confirm('War das ein Double? (OK = Ja, Abbrechen = Nein)');
+                if (!isDouble) {
+                    alert('Double-Out erforderlich!');
+                    input.value = '';
+                    return;
+                }
+            }
+
+            gameState.scores[player] = newScore;
+            gameState.history[player].unshift(points);
+            gameState.dartsThrown[player] += 3;
+
+            if (newScore === 0) {
+                showWinner(player);
+                return;
+            }
+
+            input.value = '';
+            gameState.currentPlayer = (gameState.currentPlayer % gameState.playerCount) + 1;
+            renderPlayers();
+            updateCheckoutHelper();
+        }
+
+        function addSingleDart(player) {
+            const input = document.getElementById(`input${player}`);
+            const points = parseInt(input.value);
+
+            if (isNaN(points) || points < 0 || points > 60) {
+                alert('Bitte gib einen gültigen Wert zwischen 0 und 60 ein.');
+                input.value = '';
+                return;
+            }
+
+            gameState.currentDarts[player].push(points);
+            gameState.dartsThrown[player]++;
+            input.value = '';
+
+            if (gameState.currentDarts[player].length === 3) {
+                finishRound(player);
+            } else {
+                renderPlayers();
+            }
+        }
+
+        function removeLastDart(player) {
+            if (gameState.currentDarts[player].length > 0) {
+                gameState.currentDarts[player].pop();
+                gameState.dartsThrown[player] = Math.max(0, gameState.dartsThrown[player] - 1);
+                renderPlayers();
+            }
+        }
+
+        function finishRound(player) {
+            const totalPoints = gameState.currentDarts[player].reduce((a, b) => a + b, 0);
+            const newScore = gameState.scores[player] - totalPoints;
+
+            if (newScore < 0 || (newScore === 1 && gameState.settings.doubleOut)) {
+                alert('Überwurf! Die Runde wird nicht gewertet.');
+                gameState.dartsThrown[player] -= gameState.currentDarts[player].length;
+                gameState.currentDarts[player] = [];
+                renderPlayers();
+                return;
+            }
+
+            if (newScore === 0 && gameState.settings.doubleOut) {
+                const isDouble = confirm('War der letzte Dart ein Double?');
+                if (!isDouble) {
+                    alert('Double-Out erforderlich! Die Runde wird nicht gewertet.');
+                    gameState.dartsThrown[player] -= gameState.currentDarts[player].length;
+                    gameState.currentDarts[player] = [];
+                    renderPlayers();
+                    return;
+                }
+            }
+
+            gameState.scores[player] = newScore;
+            gameState.history[player].unshift(totalPoints);
+            gameState.currentDarts[player] = [];
+
+            if (newScore === 0) {
+                showWinner(player);
+                return;
+            }
+
+            gameState.currentPlayer = (gameState.currentPlayer % gameState.playerCount) + 1;
+            renderPlayers();
+            updateCheckoutHelper();
+        }
+
+        function undoScore(player) {
+            if (gameState.history[player].length === 0) return;
+
+            const lastScore = gameState.history[player].shift();
+            gameState.scores[player] += lastScore;
+            gameState.dartsThrown[player] = Math.max(0, gameState.dartsThrown[player] - 3);
+
+            renderPlayers();
+            updateCheckoutHelper();
+        }
+
+        function calculateAverage(player) {
+            if (gameState.dartsThrown[player] === 0) return '0.0';
+            const pointsScored = gameState.startScores[player] - gameState.scores[player];
+            return ((pointsScored / gameState.dartsThrown[player]) * 3).toFixed(1);
+        }
+
+        function updateCheckoutHelper() {
+            if (!gameState.settings.checkoutSuggestions) {
+                document.getElementById('checkoutHelper').classList.remove('show');
+                return;
+            }
+
+            const score = gameState.scores[gameState.currentPlayer];
+            const helper = document.getElementById('checkoutHelper');
+            const options = document.getElementById('checkoutOptions');
+            const scoreEl = document.getElementById('checkoutScore');
+
+            if (score > 1 && score <= 170 && checkoutTable[score]) {
+                helper.classList.add('show');
+                scoreEl.textContent = score;
+                options.innerHTML = '';
+
+                checkoutTable[score].forEach((option, index) => {
+                    const div = document.createElement('div');
+                    div.className = `checkout-option ${index === 0 ? 'recommended' : ''}`;
+                    div.textContent = index === 0 ? `⭐ ${option}` : option;
+                    options.appendChild(div);
+                });
+            } else {
+                helper.classList.remove('show');
+            }
+        }
+
+        function setMode(mode) {
+            gameState.mode = mode;
+            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            resetGame();
+        }
+
+        function resetGame() {
+            for (let i = 1; i <= gameState.playerCount; i++) {
+                gameState.scores[i] = gameState.mode;
+                gameState.startScores[i] = gameState.mode;
+                gameState.history[i] = [];
+                gameState.dartsThrown[i] = 0;
+                gameState.currentDarts[i] = [];
+            }
+            gameState.currentPlayer = 1;
+            renderPlayers();
+            updateCheckoutHelper();
+            document.getElementById('winnerOverlay').classList.remove('show');
+        }
+
+        function newGame() {
+            resetGame();
+            switchTab('game');
+        }
+
+        function applySettings() {
+            for (let i = 1; i <= 4; i++) {
+                gameState.playerNames[i] = document.getElementById(`player${i}Name`).value;
+            }
+            gameState.playerCount = parseInt(document.getElementById('playerCount').value);
+            gameState.settings.doubleOut = document.getElementById('doubleOut').checked;
+            gameState.settings.doubleIn = document.getElementById('doubleIn').checked;
+            gameState.settings.checkoutSuggestions = document.getElementById('checkoutSuggestions').checked;
+            gameState.settings.quickScores = document.getElementById('quickScores').checked;
+            gameState.settings.inputMode = document.getElementById('inputMode').value;
+
+            renderPlayers();
+            updateCheckoutHelper();
+            switchTab('game');
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            if (tab === 'game') {
+                document.querySelectorAll('.tab-btn')[0].classList.add('active');
+                document.getElementById('gameTab').classList.add('active');
+            } else if (tab === 'settings') {
+                document.querySelectorAll('.tab-btn')[1].classList.add('active');
+                document.getElementById('settingsTab').classList.add('active');
+            } else if (tab === 'stats') {
+                document.querySelectorAll('.tab-btn')[2].classList.add('active');
+                document.getElementById('statsTab').classList.add('active');
+                updateStats();
+            }
+        }
+
+        function updateStats() {
+            const grid = document.getElementById('statsGrid');
+            grid.innerHTML = '';
+
+            for (let i = 1; i <= gameState.playerCount; i++) {
+                const pointsScored = gameState.startScores[i] - gameState.scores[i];
+                const avg = calculateAverage(i);
+                const highScore = gameState.history[i].length > 0 ? Math.max(...gameState.history[i]) : 0;
+
+                grid.innerHTML += `
+                    <div class="stat-card">
+                        <h3>${gameState.playerNames[i]}</h3>
+                        <div class="stat-value">${avg}</div>
+                        <div class="stat-label">3-Dart Durchschnitt</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>${gameState.playerNames[i]}</h3>
+                        <div class="stat-value">${gameState.dartsThrown[i]}</div>
+                        <div class="stat-label">Geworfene Darts</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>${gameState.playerNames[i]}</h3>
+                        <div class="stat-value">${highScore}</div>
+                        <div class="stat-label">Höchster Score</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>${gameState.playerNames[i]}</h3>
+                        <div class="stat-value">${pointsScored}</div>
+                        <div class="stat-label">Erzielte Punkte</div>
+                    </div>
+                `;
+            }
+        }
+
+        function showWinner(player) {
+            const overlay = document.getElementById('winnerOverlay');
+            const text = document.getElementById('winnerText');
+            const stats = document.getElementById('winnerStatsDiv');
+
+            text.textContent = `${gameState.playerNames[player]} hat gewonnen!`;
+
+            const highScore = gameState.history[player].length > 0 ? Math.max(...gameState.history[player]) : 0;
+
+            stats.innerHTML = `
+                <div class="winner-stat-row">
+                    <span>Durchschnitt</span>
+                    <span>${calculateAverage(player)} pro Wurf</span>
+                </div>
+                <div class="winner-stat-row">
+                    <span>Darts benötigt</span>
+                    <span>${gameState.dartsThrown[player]}</span>
+                </div>
+                <div class="winner-stat-row">
+                    <span>Höchster Score</span>
+                    <span>${highScore}</span>
+                </div>
+                <div class="winner-stat-row">
+                    <span>Spielmodus</span>
+                    <span>${gameState.mode}</span>
+                </div>
+            `;
+
+            overlay.classList.add('show');
+
+            setTimeout(() => {
+                overlay.classList.remove('show');
+            }, 8000);
+        }
+
+        initGame();
+    </script>
+</body>
+</html>
