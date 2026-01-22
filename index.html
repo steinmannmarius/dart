@@ -665,11 +665,38 @@
 
         @media (max-width: 480px) {
             .players-row {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+
+            .player-section {
+                padding: 18px;
+            }
+
+            .score-display {
+                font-size: 2.5em;
+            }
+
+            .player-name {
+                font-size: 1em;
+            }
+
+            .player-stats {
+                font-size: 0.8em;
+            }
+
+            .current-round-box {
+                min-height: 60px;
+                padding: 10px;
             }
 
             .numbers-grid {
                 grid-template-columns: repeat(4, 1fr);
+            }
+
+            .action-btn {
+                padding: 8px;
+                font-size: 0.8em;
             }
         }
     </style>
@@ -844,4 +871,352 @@
         <div class="tab-content" id="statsTab">
             <div class="stats-grid" id="statsGrid"></div>
             <div class="controls" style="margin-top: 25px;">
-                <button class="control-btn new-game-btn" onclick="switchTab
+                <button class="control-btn new-game-btn" onclick="switchTab('game')">Zurück zum Spiel</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="winner-overlay" id="winnerOverlay">
+        <div class="winner-modal">
+            <h2>🏆</h2>
+            <p id="winnerText"></p>
+            <div class="winner-stats" id="winnerStats"></div>
+        </div>
+    </div>
+
+    <script>
+        const checkoutTable = {
+            170: ["T20·T20·Bull"], 167: ["T20·T19·Bull"], 164: ["T20·T18·Bull"], 161: ["T20·T17·Bull"],
+            160: ["T20·T20·D20"], 158: ["T20·T20·D19"], 157: ["T20·T19·D20"], 156: ["T20·T20·D18"],
+            155: ["T20·T19·D19"], 154: ["T20·T18·D20"], 153: ["T20·T19·D18"], 152: ["T20·T20·D16"],
+            151: ["T20·T17·D20"], 150: ["T20·T18·D18"], 148: ["T20·T16·D20"], 147: ["T20·T17·D18"],
+            146: ["T20·T18·D16"], 144: ["T20·T20·D12"], 143: ["T20·T17·D16"], 142: ["T20·T14·D20"],
+            141: ["T20·T19·D12"], 140: ["T20·T20·D10"], 138: ["T20·T18·D12"], 137: ["T20·T19·D10"],
+            136: ["T20·T20·D8"], 135: ["T20·T17·D12"], 134: ["T20·T14·D16"], 132: ["T20·T16·D12"],
+            130: ["T20·T18·D8"], 128: ["T18·T14·D16"], 127: ["T20·T17·D8"], 126: ["T19·T19·D6"],
+            124: ["T20·T16·D8"], 122: ["T18·T18·D7"], 121: ["T20·T11·D14"], 120: ["T20·20·D20"],
+            110: ["T20·18·D16"], 100: ["T20·D20"], 98: ["T20·D19"], 96: ["T20·D18"], 94: ["T18·D20"],
+            92: ["T20·D16"], 90: ["T20·D15"], 88: ["T16·D20"], 86: ["T18·D16"], 84: ["T20·D12"],
+            82: ["Bull·D16"], 80: ["T20·D10"], 78: ["T18·D12"], 76: ["T20·D8"], 74: ["T14·D16"],
+            72: ["T16·D12"], 70: ["T10·D20"], 68: ["T20·D4"], 66: ["T10·D18"], 64: ["T16·D8"],
+            62: ["T10·D16"], 60: ["20·D20"], 58: ["18·D20"], 56: ["T16·D4"], 54: ["14·D20"],
+            52: ["12·D20"], 50: ["10·D20"], 48: ["16·D16"], 46: ["6·D20"], 44: ["12·D16"],
+            42: ["10·D16"], 40: ["D20"], 38: ["D19"], 36: ["D18"], 34: ["D17"], 32: ["D16"],
+            30: ["D15"], 28: ["D14"], 26: ["D13"], 24: ["D12"], 22: ["D11"], 20: ["D10"],
+            18: ["D9"], 16: ["D8"], 14: ["D7"], 12: ["D6"], 10: ["D5"], 8: ["D4"], 6: ["D3"],
+            4: ["D2"], 2: ["D1"]
+        };
+
+        let game = {
+            mode: 301,
+            currentPlayer: 1,
+            multiplier: 1,
+            settings: {
+                doubleOut: false,
+                doubleIn: false,
+                checkoutSuggestions: true,
+                soundEffects: false
+            },
+            players: {
+                1: { name: 'Spieler 1', score: 301, startScore: 301, darts: 0, currentRound: [], history: [] },
+                2: { name: 'Spieler 2', score: 301, startScore: 301, darts: 0, currentRound: [], history: [] }
+            }
+        };
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            const tabs = ['game', 'settings', 'stats'];
+            const index = tabs.indexOf(tabName);
+            
+            document.querySelectorAll('.tab-btn')[index].classList.add('active');
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            
+            if (tabName === 'stats') {
+                updateStats();
+            }
+        }
+
+        function setMode(mode) {
+            game.mode = mode;
+            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            resetGame();
+        }
+
+        function setMultiplier(mult) {
+            game.multiplier = mult;
+            document.querySelectorAll('.multiplier-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function addDart(number) {
+            const p = game.players[game.currentPlayer];
+            let value;
+            
+            if (number === 25) {
+                value = game.multiplier === 2 ? 50 : 25;
+            } else if (number === 0) {
+                value = 0;
+            } else {
+                value = number * game.multiplier;
+            }
+
+            p.currentRound.push({
+                value: value,
+                display: formatDart(number, game.multiplier)
+            });
+            p.darts++;
+
+            updateDisplay(game.currentPlayer);
+
+            if (p.currentRound.length === 3) {
+                finishRound(game.currentPlayer);
+            }
+        }
+
+        function formatDart(number, mult) {
+            if (number === 0) return 'Miss';
+            if (number === 25) return mult === 2 ? 'Bull' : '25';
+            if (mult === 1) return number.toString();
+            if (mult === 2) return 'D' + number;
+            if (mult === 3) return 'T' + number;
+        }
+
+        function undoDart(player) {
+            if (player !== game.currentPlayer) return;
+            const p = game.players[player];
+            if (p.currentRound.length === 0) return;
+
+            p.currentRound.pop();
+            p.darts = Math.max(0, p.darts - 1);
+            updateDisplay(player);
+        }
+
+        function finishRound(player) {
+            if (player !== game.currentPlayer) return;
+            const p = game.players[player];
+            if (p.currentRound.length === 0) return;
+
+            const total = p.currentRound.reduce((sum, dart) => sum + dart.value, 0);
+            const newScore = p.score - total;
+
+            if (newScore < 0 || newScore === 1) {
+                alert('Überwurf! Die Runde wird nicht gewertet.');
+                p.darts -= p.currentRound.length;
+                p.currentRound = [];
+                updateDisplay(player);
+                return;
+            }
+
+            if (newScore === 0) {
+                if (game.settings.doubleOut) {
+                    const lastDart = p.currentRound[p.currentRound.length - 1];
+                    if (!lastDart.display.startsWith('D') && lastDart.display !== 'Bull') {
+                        alert('Double-Out erforderlich! Die Runde wird nicht gewertet.');
+                        p.darts -= p.currentRound.length;
+                        p.currentRound = [];
+                        updateDisplay(player);
+                        return;
+                    }
+                }
+                p.score = 0;
+                p.history.unshift(total);
+                showWinner(player);
+                return;
+            }
+
+            p.score = newScore;
+            p.history.unshift(total);
+            p.currentRound = [];
+
+            game.currentPlayer = game.currentPlayer === 1 ? 2 : 1;
+            updateActivePlayer();
+            updateDisplay(1);
+            updateDisplay(2);
+            updateCheckout();
+        }
+
+        function updateDisplay(player) {
+            const p = game.players[player];
+            
+            document.getElementById(`score${player}`).textContent = p.score;
+            document.getElementById(`darts${player}`).textContent = p.darts;
+            
+            const avg = p.darts > 0 ? (((p.startScore - p.score) / p.darts) * 3).toFixed(1) : '0.0';
+            document.getElementById(`avg${player}`).textContent = avg;
+
+            const currentDartsEl = document.getElementById(`currentDarts${player}`);
+            const dartTotalEl = document.getElementById(`dartTotal${player}`);
+            const finishBtn = document.getElementById(`finishBtn${player}`);
+
+            if (p.currentRound.length > 0) {
+                const displays = p.currentRound.map(d => d.display).join(' + ');
+                const total = p.currentRound.reduce((sum, dart) => sum + dart.value, 0);
+                currentDartsEl.textContent = displays;
+                dartTotalEl.textContent = `Summe: ${total}`;
+                finishBtn.disabled = false;
+            } else {
+                currentDartsEl.textContent = '-';
+                dartTotalEl.textContent = '';
+                finishBtn.disabled = true;
+            }
+
+            const historyEl = document.getElementById(`history${player}`);
+            historyEl.textContent = p.history.length > 0 ? p.history.slice(0, 5).join(', ') : '-';
+        }
+
+        function updateActivePlayer() {
+            document.getElementById('player1Section').classList.toggle('active', game.currentPlayer === 1);
+            document.getElementById('player2Section').classList.toggle('active', game.currentPlayer === 2);
+        }
+
+        function updateCheckout() {
+            if (!game.settings.checkoutSuggestions) {
+                document.getElementById('checkoutHelper').classList.remove('show');
+                return;
+            }
+
+            const score = game.players[game.currentPlayer].score;
+            const helper = document.getElementById('checkoutHelper');
+            
+            if (score > 1 && score <= 170 && checkoutTable[score]) {
+                helper.classList.add('show');
+                document.getElementById('checkoutScore').textContent = score;
+                
+                const options = document.getElementById('checkoutOptions');
+                options.innerHTML = '';
+                
+                checkoutTable[score].forEach((opt, i) => {
+                    const div = document.createElement('div');
+                    div.className = `checkout-option ${i === 0 ? 'recommended' : ''}`;
+                    div.textContent = i === 0 ? '⭐ ' + opt : opt;
+                    options.appendChild(div);
+                });
+            } else {
+                helper.classList.remove('show');
+            }
+        }
+
+        function resetGame() {
+            game.players[1].score = game.mode;
+            game.players[1].startScore = game.mode;
+            game.players[1].darts = 0;
+            game.players[1].currentRound = [];
+            game.players[1].history = [];
+            
+            game.players[2].score = game.mode;
+            game.players[2].startScore = game.mode;
+            game.players[2].darts = 0;
+            game.players[2].currentRound = [];
+            game.players[2].history = [];
+            
+            game.currentPlayer = 1;
+            
+            updateDisplay(1);
+            updateDisplay(2);
+            updateActivePlayer();
+            updateCheckout();
+            document.getElementById('winnerOverlay').classList.remove('show');
+        }
+
+        function newGame() {
+            resetGame();
+        }
+
+        function applySettings() {
+            game.players[1].name = document.getElementById('player1NameInput').value;
+            game.players[2].name = document.getElementById('player2NameInput').value;
+            game.settings.doubleOut = document.getElementById('doubleOut').checked;
+            game.settings.doubleIn = document.getElementById('doubleIn').checked;
+            game.settings.checkoutSuggestions = document.getElementById('checkoutSuggestions').checked;
+            game.settings.soundEffects = document.getElementById('soundEffects').checked;
+            
+            document.getElementById('player1Name').textContent = game.players[1].name;
+            document.getElementById('player2Name').textContent = game.players[2].name;
+            
+            updateCheckout();
+            switchTab('game');
+        }
+
+        function updateStats() {
+            const grid = document.getElementById('statsGrid');
+            grid.innerHTML = '';
+
+            for (let i = 1; i <= 2; i++) {
+                const p = game.players[i];
+                const pointsScored = p.startScore - p.score;
+                const avg = p.darts > 0 ? (((p.startScore - p.score) / p.darts) * 3).toFixed(1) : '0.0';
+                const highScore = p.history.length > 0 ? Math.max(...p.history) : 0;
+
+                grid.innerHTML += `
+                    <div class="stat-card">
+                        <h3>${p.name}</h3>
+                        <div class="stat-value">${avg}</div>
+                        <div class="stat-label">3-Dart Durchschnitt</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>${p.name}</h3>
+                        <div class="stat-value">${p.darts}</div>
+                        <div class="stat-label">Geworfene Darts</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>${p.name}</h3>
+                        <div class="stat-value">${highScore}</div>
+                        <div class="stat-label">Höchster Score</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>${p.name}</h3>
+                        <div class="stat-value">${pointsScored}</div>
+                        <div class="stat-label">Erzielte Punkte</div>
+                    </div>
+                `;
+            }
+        }
+
+        function showWinner(player) {
+            const p = game.players[player];
+            const overlay = document.getElementById('winnerOverlay');
+            const text = document.getElementById('winnerText');
+            const stats = document.getElementById('winnerStats');
+
+            text.textContent = `${p.name} hat gewonnen!`;
+
+            const avg = ((p.startScore - p.score) / p.darts * 3).toFixed(1);
+            const highScore = p.history.length > 0 ? Math.max(...p.history) : 0;
+
+            stats.innerHTML = `
+                <div class="winner-stat-row">
+                    <span>Durchschnitt</span>
+                    <span>${avg} pro Wurf</span>
+                </div>
+                <div class="winner-stat-row">
+                    <span>Darts benötigt</span>
+                    <span>${p.darts}</span>
+                </div>
+                <div class="winner-stat-row">
+                    <span>Höchster Score</span>
+                    <span>${highScore}</span>
+                </div>
+                <div class="winner-stat-row">
+                    <span>Spielmodus</span>
+                    <span>${game.mode}</span>
+                </div>
+            `;
+
+            overlay.classList.add('show');
+
+            setTimeout(() => {
+                overlay.classList.remove('show');
+            }, 8000);
+        }
+
+        // Init
+        updateDisplay(1);
+        updateDisplay(2);
+        updateActivePlayer();
+        updateCheckout();
+    </script>
+</body>
+</html>
