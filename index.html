@@ -624,79 +624,279 @@
 
         @media (max-width: 768px) {
             .container {
-                padding: 25px 18px;
+                padding: 20px 15px;
             }
 
             h1 {
-                font-size: 1.8em;
+                font-size: 1.6em;
             }
 
-            .score-display {
-                font-size: 3em;
+            .icon {
+                width: 60px;
+                height: 60px;
+                font-size: 30px;
             }
 
-            .numbers-grid {
-                grid-template-columns: repeat(5, 1fr);
+            .subtitle {
+                font-size: 0.9em;
+            }
+
+            .tabs {
                 gap: 6px;
+                padding: 5px;
             }
 
-            .number-btn {
-                font-size: 13px;
-                padding: 10px;
-            }
-
-            .multiplier-selector {
-                gap: 6px;
-            }
-
-            .multiplier-btn {
-                padding: 10px;
+            .tab-btn {
+                padding: 10px 12px;
                 font-size: 0.85em;
             }
 
             .mode-selector {
-                flex-wrap: wrap;
+                gap: 8px;
             }
 
             .mode-btn {
-                flex: 1 1 calc(50% - 5px);
+                padding: 10px 16px;
+                font-size: 0.85em;
             }
-        }
 
-        @media (max-width: 480px) {
             .players-row {
-                grid-template-columns: 1fr 1fr;
                 gap: 12px;
             }
 
             .player-section {
-                padding: 18px;
-            }
-
-            .score-display {
-                font-size: 2.5em;
+                padding: 16px;
             }
 
             .player-name {
                 font-size: 1em;
+                margin-bottom: 8px;
+            }
+
+            .score-display {
+                font-size: 3em;
+                margin-bottom: 8px;
             }
 
             .player-stats {
                 font-size: 0.8em;
+                margin-bottom: 12px;
             }
 
             .current-round-box {
-                min-height: 60px;
                 padding: 10px;
+                min-height: 65px;
+                margin-bottom: 10px;
             }
 
-            .numbers-grid {
-                grid-template-columns: repeat(4, 1fr);
+            .round-label {
+                font-size: 0.75em;
+                margin-bottom: 4px;
+            }
+
+            .current-darts {
+                font-size: 0.85em;
+            }
+
+            .dart-total {
+                font-size: 1em;
+            }
+
+            .player-actions {
+                gap: 6px;
+                margin-bottom: 10px;
             }
 
             .action-btn {
+                padding: 9px;
+                font-size: 0.8em;
+            }
+
+            .history {
+                padding-top: 10px;
+            }
+
+            .history-label {
+                font-size: 0.75em;
+                margin-bottom: 4px;
+            }
+
+            .history-items {
+                font-size: 0.8em;
+            }
+
+            .dartboard-section {
+                padding: 18px;
+            }
+
+            .dartboard-title {
+                font-size: 1em;
+                margin-bottom: 12px;
+            }
+
+            .multiplier-selector {
+                gap: 6px;
+                margin-bottom: 12px;
+            }
+
+            .multiplier-btn {
+                padding: 10px 8px;
+                font-size: 0.8em;
+            }
+
+            .numbers-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 5px;
+                margin-bottom: 10px;
+            }
+
+            .number-btn {
+                font-size: 13px;
+                padding: 8px 4px;
+            }
+
+            .special-btn {
+                padding: 10px;
+                font-size: 0.85em;
+            }
+
+            .controls {
+                gap: 8px;
+                margin-top: 20px;
+            }
+
+            .control-btn {
+                padding: 10px 20px;
+                font-size: 0.85em;
+            }
+
+            .checkout-helper {
+                padding: 12px;
+                margin-bottom: 20px;
+            }
+
+            .checkout-helper h3 {
+                font-size: 0.95em;
+                margin-bottom: 8px;
+            }
+
+            .checkout-option {
+                padding: 5px 10px;
+                font-size: 0.8em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px 10px;
+            }
+
+            h1 {
+                font-size: 1.4em;
+            }
+
+            .players-row {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            .player-section {
+                padding: 12px;
+            }
+
+            .player-name {
+                font-size: 0.9em;
+            }
+
+            .score-display {
+                font-size: 2.2em;
+                margin-bottom: 6px;
+            }
+
+            .player-stats {
+                font-size: 0.7em;
+            }
+
+            .current-round-box {
+                padding: 8px;
+                min-height: 55px;
+            }
+
+            .round-label {
+                font-size: 0.7em;
+            }
+
+            .current-darts {
+                font-size: 0.75em;
+            }
+
+            .dart-total {
+                font-size: 0.9em;
+            }
+
+            .action-btn {
+                padding: 7px;
+                font-size: 0.75em;
+            }
+
+            .history-label {
+                font-size: 0.7em;
+            }
+
+            .history-items {
+                font-size: 0.75em;
+            }
+
+            .dartboard-section {
+                padding: 15px;
+            }
+
+            .dartboard-title {
+                font-size: 0.95em;
+                margin-bottom: 10px;
+            }
+
+            .multiplier-btn {
+                padding: 8px 6px;
+                font-size: 0.75em;
+            }
+
+            .numbers-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 4px;
+            }
+
+            .number-btn {
+                font-size: 12px;
+                padding: 6px 2px;
+            }
+
+            .special-btn {
                 padding: 8px;
                 font-size: 0.8em;
+            }
+
+            .control-btn {
+                padding: 9px 18px;
+                font-size: 0.8em;
+            }
+
+            .mode-btn {
+                flex: 1 1 calc(50% - 4px);
+                padding: 9px 12px;
+                font-size: 0.8em;
+            }
+
+            .winner-modal {
+                padding: 35px 25px;
+            }
+
+            .winner-modal h2 {
+                font-size: 2.5em;
+            }
+
+            .winner-modal p {
+                font-size: 1.1em;
             }
         }
     </style>
@@ -923,6 +1123,57 @@
             }
         };
 
+        // Sound-Effekte
+        function playSound(type) {
+            if (!game.settings.soundEffects) return;
+            
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            switch(type) {
+                case 'click':
+                    oscillator.frequency.value = 800;
+                    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.1);
+                    break;
+                case 'finish':
+                    oscillator.frequency.value = 1200;
+                    gainNode.gain.setValueAtTime(0.15, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.2);
+                    break;
+                case 'winner':
+                    // Siegesmelodie
+                    const notes = [523, 659, 784, 1047];
+                    notes.forEach((freq, i) => {
+                        const osc = audioContext.createOscillator();
+                        const gain = audioContext.createGain();
+                        osc.connect(gain);
+                        gain.connect(audioContext.destination);
+                        osc.frequency.value = freq;
+                        gain.gain.setValueAtTime(0.2, audioContext.currentTime + i * 0.15);
+                        gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + i * 0.15 + 0.3);
+                        osc.start(audioContext.currentTime + i * 0.15);
+                        osc.stop(audioContext.currentTime + i * 0.15 + 0.3);
+                    });
+                    break;
+                case 'error':
+                    oscillator.frequency.value = 200;
+                    gainNode.gain.setValueAtTime(0.15, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.3);
+                    break;
+            }
+        }
+
         function switchTab(tabName) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
@@ -949,6 +1200,7 @@
             game.multiplier = mult;
             document.querySelectorAll('.multiplier-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
+            playSound('click');
         }
 
         function addDart(number) {
@@ -969,6 +1221,7 @@
             });
             p.darts++;
 
+            playSound('click');
             updateDisplay(game.currentPlayer);
 
             if (p.currentRound.length === 3) {
@@ -1003,6 +1256,7 @@
             const newScore = p.score - total;
 
             if (newScore < 0 || newScore === 1) {
+                playSound('error');
                 alert('Überwurf! Die Runde wird nicht gewertet.');
                 p.darts -= p.currentRound.length;
                 p.currentRound = [];
@@ -1014,6 +1268,7 @@
                 if (game.settings.doubleOut) {
                     const lastDart = p.currentRound[p.currentRound.length - 1];
                     if (!lastDart.display.startsWith('D') && lastDart.display !== 'Bull') {
+                        playSound('error');
                         alert('Double-Out erforderlich! Die Runde wird nicht gewertet.');
                         p.darts -= p.currentRound.length;
                         p.currentRound = [];
@@ -1023,6 +1278,7 @@
                 }
                 p.score = 0;
                 p.history.unshift(total);
+                playSound('winner');
                 showWinner(player);
                 return;
             }
@@ -1031,6 +1287,7 @@
             p.history.unshift(total);
             p.currentRound = [];
 
+            playSound('finish');
             game.currentPlayer = game.currentPlayer === 1 ? 2 : 1;
             updateActivePlayer();
             updateDisplay(1);
